@@ -1,0 +1,110 @@
+import { SparkleIcon } from '@/components/SparkleIcon'
+import { generateRssFeed } from '@/lib/generateRssFeed'
+
+export async function getStaticProps() {
+  if (process.env.NODE_ENV === 'production') {
+    await generateRssFeed()
+  }
+  return { props: {} }
+}
+
+---
+
+
+## Why remote signing {{ date: '2023-06-07T00:00Z' }}
+
+nsecBunker (through NIP-46) allows for your users to assign specific permissions to your application, without ever granting you their nsec.
+
+Now, why would you want to do this?
+
+I mean, does it really even need describing? Do you really want the responsibility of having your users' nsec in your
+code? What if a bug in your code leaks your users' nsecs? I don't know about you, but, to me, that sounds like a nightmare.
+
+## Signers {{ date: '2023-06-06T00:00Z' }}
+
+Signing via an nsecBunker requires <b>two</b> NDK Signers:
+
+* a local signer
+* a remote signer
+
+## Local Signer
+
+A local signer is an application key that is NOT tied to the user. The user might as well never see this key.
+
+This *local* key is the one that will be signing requests for nsecBunker to sign.
+
+> A local key doesn't publish events for normal consumption, but rather, it solely exists to communicate with an nsecBunker.
+
+### Generating a local signer
+
+The following code will generate a new private key.
+
+```typescript
+const localSigner = NDKPrivateKeySigner.generate()
+```
+
+When creating a real integration, you would want to store this private key. Your users will be granting permissions to
+this key, so you'll want to reuse this key across your user sessions when it makes sense to do so.
+
+### Loading a local signer with a saved private key
+If you have already saved a local key you would load it instead, obviously.
+
+```typescript
+const privateKey = localStorage.getItem('localSignerPrivateKey');
+const localSigner = new NDKPrivateKeySigner(privateKey);
+```
+
+### Loading the remote signer
+
+The remote signer is a `NDKNip46Signer`, which communicates with the nsecBunker (over nostr relays, obviously) to exchange event signatures and other things.
+
+### Target pubkey
+
+The next and final thing we'll need is the remote pubkey we desired to sign as. We'll ask the user in some way
+what's the pubkey they want to sign as.
+
+```
+const desiredPubkeyOrToken = prompt(`Enter your npub or token`);
+```
+
+### Token
+What's that token thing? Is it a shitcoin? Nah.
+
+A token is a one-time-use secret that users can configure in their nsecBunker to confer a set of permissions
+to an application. For example, a user might give your application permission to only sign kind:1 events, but not
+kind:0 events.
+
+### Communicating with the nsecBunker
+Since the remote signer is accessed via Nostr, we use an `NDK` instance to communicate with it.
+
+Now, you can either use the same NDK instance you use for all other nostr communications but, for now, I choose to create a dedicated NDK instance that will just be used to communicate with the nsecBunker.
+
+```typescript
+const bunkerNDK = new NDK({
+  explicitRelayUrls: [
+    'wss://relay.nsecbunker.com',
+    'wss://nostr.vulpem.com',
+  ]
+})
+bunkerNDK.connect(2000);
+
+const remoteSigner = new NDKNip46Signer(bunkerNDK, desiredPubkeyOrToken, localSigner);
+```
+
+Now that we have both our signers, let's create the generic NDK instance we're going to be using to
+communicate for normal nostr usage.
+
+```typescript
+const typicalNDK = new NDK({
+  explicitRelayUrls: [
+    'wss://relay.damus.io',
+    'wss://nos.lol',
+    // ...
+  ],
+  signer: remoteSigner
+})
+```
+
+We're going to pass in to this NDK instance the remote signer.
+
+
