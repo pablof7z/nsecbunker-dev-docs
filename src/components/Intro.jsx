@@ -56,14 +56,11 @@ export function Intro() {
         This website will show you a 5-minute integration with nsecBunker.
       </p>
       <div className="mt-8 flex flex-wrap justify-center gap-x-1 gap-y-3 sm:gap-x-2 lg:justify-start">
-        <IconLink href="#" icon={BookIcon} className="flex-none">
+        <IconLink href="https://ndk.fyi/docs/classes/NDKNip46Signer.html" icon={BookIcon} className="flex-none">
           Documentation
         </IconLink>
-        <IconLink href="#" icon={GitHubIcon} className="flex-none">
-          GitHub
-        </IconLink>
-        <IconLink href="/rss/feed.xml" icon={FeedIcon} className="flex-none">
-          RSS
+        <IconLink href="https://nsecbunker.com" icon={BookIcon} className="flex-none">
+          nsecBunker
         </IconLink>
       </div>
     </>
@@ -74,9 +71,7 @@ export function IntroFooter() {
   return (
     <p className="flex items-baseline gap-x-2 text-[0.8125rem]/6 text-gray-500">
       Brought to you by{' '}
-      <IconLink href="nostr:npub1l2vyh47mk2p0qlsku7hg0vn29faehy9hy34ygaclpn66ukqp3afqutajft" icon={TwitterIcon} compact large>
-        PABLOF7Z
-      </IconLink>
+      PABLOF7Z
     </p>
   )
 }

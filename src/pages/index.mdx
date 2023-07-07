@@ -74,6 +74,8 @@ A token is a one-time-use secret that users can configure in their nsecBunker to
 to an application. For example, a user might give your application permission to only sign kind:1 events, but not
 kind:0 events.
 
+It looks like: `npub#secret`.
+
 ### Communicating with the nsecBunker
 Since the remote signer is accessed via Nostr, we use an `NDK` instance to communicate with it.
 
@@ -107,4 +109,9 @@ const typicalNDK = new NDK({
 
 We're going to pass in to this NDK instance the remote signer.
 
+## Connecting
+This step is kinda optional, but I think it's a good idea. It'll send a NIP-46 `connect` command to the nsecBunker; the nsecBunker will `ok` if/when the local private key is authorized to connect.
 
+```typescript
+await remoteSigner.blockUntilRead();
+```
