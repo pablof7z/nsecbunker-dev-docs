@@ -43,15 +43,15 @@ function TwitterIcon(props) {
 export function Intro() {
   return (
     <>
-      <div>
-        <Link href="/">
-          <Logo className="inline-block h-8 w-auto" />
-        </Link>
-      </div>
       <h1 className="mt-14 font-display text-4xl/tight font-light text-white">
         <span className="text-sky-300">5-minutes</span><br />
         nsecBunker integration
       </h1>
+
+      <p className="my-8 text-lg/6 font-regular text-gray-300">
+        nsecBunker (through NIP-46) allows for your users to assign specific permissions to your application, without ever granting you their nsec.
+      </p>
+
       <p className="mt-4 text-sm/6 text-gray-300">
         This website will show you a 5-minute integration with nsecBunker.
       </p>

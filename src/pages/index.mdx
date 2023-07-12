@@ -11,15 +11,6 @@ export async function getStaticProps() {
 ---
 
 
-## Why remote signing {{ date: '2023-06-07T00:00Z' }}
-
-nsecBunker (through NIP-46) allows for your users to assign specific permissions to your application, without ever granting you their nsec.
-
-Now, why would you want to do this?
-
-I mean, does it really even need describing? Do you really want the responsibility of having your users' nsec in your
-code? What if a bug in your code leaks your users' nsecs? I don't know about you, but, to me, that sounds like a nightmare.
-
 ## Signers {{ date: '2023-06-06T00:00Z' }}
 
 Signing via an nsecBunker requires <b>two</b> NDK Signers:
@@ -63,7 +54,7 @@ The remote signer is a `NDKNip46Signer`, which communicates with the nsecBunker 
 The next and final thing we'll need is the remote pubkey we desired to sign as. We'll ask the user in some way
 what's the pubkey they want to sign as.
 
-```
+```typescript
 const desiredPubkeyOrToken = prompt(`Enter your npub or token`);
 ```
 
@@ -110,8 +101,11 @@ const typicalNDK = new NDK({
 We're going to pass in to this NDK instance the remote signer.
 
 ## Connecting
-This step is kinda optional, but I think it's a good idea. It'll send a NIP-46 `connect` command to the nsecBunker; the nsecBunker will `ok` if/when the local private key is authorized to connect.
+This step is kinda optional, but I think it's a good idea, as it will ensure that the connection has been established/authorized.
+
+It'll send a NIP-46 `connect` command to the nsecBunker; the nsecBunker will `ok` if/when the local private key is authorized to connect.
 
 ```typescript
 await remoteSigner.blockUntilRead();
 ```
+
